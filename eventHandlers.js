@@ -381,7 +381,6 @@ export function registerListeners() {
   });
   newProjectBtn.addEventListener('click', () => newProject(true));
   myProjectsBtn.addEventListener('click', showProjectsModal);
-  premiumBtnSidebar.addEventListener('click', ()=> toast('Recursos Premium em breve', 'warn'));
   deleteProjectBtn.addEventListener('click', ()=> {
     if (!state.currentProjectId) return toast('Nenhum projeto carregado', 'warn');
     confirmModal('Deletar projeto?', 'Essa ação não pode ser desfeita.', async ()=> {
