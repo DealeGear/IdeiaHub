@@ -54,25 +54,7 @@ export function renderBlocks() {
 
 // Projeto
 function newProject(askConfirmation = false) {
-  if (askConfirmation && state.dirty) {
-    confirmModal(
-      'Iniciar novo projeto?',
-      'Você possui alterações não salvas. Deseja continuar?',
-      () => {
-        state.currentProjectId = null;
-        state.blocks = [];
-        state.currentFramework = "";
-        state.currentTemplate = "";
-        state.dirty = false;
-        els.projectName.value = "Projeto sem título";
-        els.frameworkSelect.value = "";
-        els.templateSelect.value = "";
-        renderBlocks();
-        setStatus('novo');
-        toast('Novo projeto iniciado', 'success');
-      }
-    );
-  } else {
+  const resetProject = () => {
     state.currentProjectId = null;
     state.blocks = [];
     state.currentFramework = "";
@@ -81,8 +63,28 @@ function newProject(askConfirmation = false) {
     els.projectName.value = "Projeto sem título";
     els.frameworkSelect.value = "";
     els.templateSelect.value = "";
+    
+    // LINHA CRUCIAL: Reseta o HTML da área de estado vazio
+    els.empty.innerHTML = `
+      <div class="intro-box">
+          <h2>Selecione um Framework ou Template</h2>
+          <p>Para começar, escolha uma das opções disponíveis na barra superior ou importe um projeto existente.</p>
+      </div>
+    `;
+
     renderBlocks();
     setStatus('novo');
+    toast('Novo projeto iniciado', 'success');
+  };
+
+  if (askConfirmation && state.dirty) {
+    confirmModal(
+      'Iniciar novo projeto?',
+      'Você possui alterações não salvas. Deseja continuar?',
+      resetProject
+    );
+  } else {
+    resetProject();
     if(askConfirmation) toast('Novo projeto iniciado', 'success');
   }
 }
@@ -420,9 +422,26 @@ export function registerListeners() {
     toast('Tema alternado', 'success');
   });
 
-  
+  async function handleSaveProject() {
+  if (state.currentProjectId) {
+    // Se o projeto já tem um ID, significa que já foi salvo.
+    // Pedimos confirmação antes de sobrescrever.
+    confirmModal(
+      'Salvar alterações?',
+      'Este projeto já existe. Deseja sobrescrevê-lo?',
+      async () => {
+        await saveProject(); // Chama a função do db.js para salvar
+        toast('Projeto salvo com sucesso!', 'success');
+      }
+    );
+  } else {
+    // Se é um projeto novo (sem ID), salva diretamente.
+    await saveProject();
+    toast('Projeto salvo com sucesso!', 'success');
+  }
+}
 
-  saveBtn.addEventListener('click', saveProject);
+  saveBtn.addEventListener('click', handleSaveProject);
   exportPdfBtn.addEventListener('click', exportPDF);
   exportJsonBtn.addEventListener('click', async () => {
     try {
@@ -506,4 +525,51 @@ export function registerListeners() {
   });
   testHypothesisBtn.addEventListener('click', showHypothesisModal);
 document.getElementById('helpBtn').addEventListener('click', showHelpModal);  
+}
+
+// ... seus event listeners existentes
+
+// 1. Liga o botão de importar ao input de arquivo
+els.importJsonBtn.addEventListener('click', () => {
+  els.importFileInput.click();
+});
+
+// 2. Lida com a seleção do arquivo
+els.importFileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (!file) {
+    return; // Se nenhum arquivo foi selecionado, não faz nada
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      loadProjectFromJSON(importedData);
+      toast('Projeto importado com sucesso!', 'success');
+      closeModal();
+    } catch (error) {
+      toast('Erro ao ler o arquivo JSON. Formato inválido.', 'error');
+      console.error('Erro ao processar JSON:', error);
+    }
+  };
+
+  reader.readAsText(file);
+});
+
+
+// 3. Função para carregar os dados do JSON no projeto
+function loadProjectFromJSON(data) {
+  // Limpa o projeto atual
+  els.projectName.value = data.name || "Projeto Importado";
+  state.currentFramework = data.framework;
+  state.currentTemplate = data.template;
+  state.blocks = data.blocks;
+  state.dirty = true; // O projeto tem alterações não salvas após a importação
+
+  // Atualiza a interface
+  renderBlocks();
+  setStatus('editando');
+  els.frameworkSelect.value = state.currentFramework;
+  els.frameworkSelect.dispatchEvent(new Event('change'));
 }

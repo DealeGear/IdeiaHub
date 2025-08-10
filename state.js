@@ -32,4 +32,6 @@ export const els = {
   premiumBtnSidebar: document.getElementById('premiumBtnSidebar'),
   deleteProjectBtn: document.getElementById('deleteProjectBtn'),
   testHypothesisBtn: document.getElementById('testHypothesisBtn'),
+  importJsonBtn: document.getElementById('importJsonBtn'),
+  importFileInput: document.getElementById('importFileInput'),
 };
