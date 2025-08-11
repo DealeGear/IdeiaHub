@@ -402,7 +402,7 @@ function showHypothesisModal() {
 export function registerListeners() {
   const themeToggle = document.getElementById('themeToggle');
   const saveBtn = document.getElementById('saveBtn');
-  const exportPdfBtn = document.getElementById('exportPdfBtn');
+  //const exportPdfBtn = document.getElementById('exportPdfBtn'); linha a ser deletada
   const exportJsonBtn = document.getElementById('exportJsonBtn');
   const exportBtnSidebar = document.getElementById('exportBtnSidebar');
   const resetTemplateBtn = document.getElementById('resetTemplateBtn');
@@ -412,6 +412,7 @@ export function registerListeners() {
   const premiumBtnSidebar = document.getElementById('premiumBtnSidebar');
   const deleteProjectBtn = document.getElementById('deleteProjectBtn');
   const testHypothesisBtn = document.getElementById('testHypothesisBtn');
+  const criticarProjetoBtn = document.getElementById('criticarProjetoBtn');
   
   els.modalClose.addEventListener('click', closeModal);
   els.modalBackdrop.addEventListener('click', (e)=> { if (e.target === els.modalBackdrop) closeModal(); });
@@ -442,7 +443,7 @@ export function registerListeners() {
 }
 
   saveBtn.addEventListener('click', handleSaveProject);
-  exportPdfBtn.addEventListener('click', exportPDF);
+  //exportPdfBtn.addEventListener('click', exportPDF);
   exportJsonBtn.addEventListener('click', async () => {
     try {
       await saveProject();
@@ -572,4 +573,34 @@ function loadProjectFromJSON(data) {
   setStatus('editando');
   els.frameworkSelect.value = state.currentFramework;
   els.frameworkSelect.dispatchEvent(new Event('change'));
+}
+//função do botão de criticar projeto
+criticarProjetoBtn.addEventListener('click',criticarProjeto);
+
+function criticarProjeto() {
+  if (!state.currentProjectId) {
+    toast('Nenhum projeto carregado', 'warn');
+    return;
+  }
+  
+  const body = document.createElement('div');
+  body.className = 'checklist';
+  body.innerHTML = `
+    <div class="check-item">
+      <div>
+        <strong>Critique seu projeto:</strong>
+        <p>Revise cada bloco e verifique se atende aos critérios de clareza, relevância e viabilidade.</p>
+      </div>
+    </div>
+    <div class="check-item">
+      <div>
+        <strong>Peça feedback a colegas ou mentores</strong>
+        <p>Compartilhe o projeto e solicite opiniões construtivas.</p>
+      </div>
+    </div>
+  `;
+  
+  openModal('Criticar Projeto', body, [
+    { label: 'Fechar', icon: 'x', onClick: closeModal }
+  ]);
 }
