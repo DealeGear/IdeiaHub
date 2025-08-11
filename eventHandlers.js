@@ -592,7 +592,7 @@ function abrirModalCritica() {
     <ol>
       <li>Acesse a pasta downloads do seu dispositivo</li>
       <li>Verifique se o arquivo "Critica do Projeto - Nome do Projeto" está na pasta</li>
-      <li>Acesse sua IA preferida, como ChatGPT, Gemini ou outra. Faça o login se necessário</li>
+      <li>Acesse sua IA preferida, com ChatGPT, Gemini ou outra. Faça o login se necessário</li>
       <li>Faça o upload do arquivo "Critica do Projeto - Nome do Projeto"</li>
       <li>No prompt da IA escreva: "Analise esse arquivo JSON e responda aos Prompts da chave "critiquePrompts""</li>
       <li>A IA fará a critica daquilo que você escreveu nos campos do framework escolhido. Sugerimos que copie esse texto e cole em um editor de texto de sua preferência, ou faça o download se a IA permitir</li>
