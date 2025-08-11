@@ -575,9 +575,9 @@ function loadProjectFromJSON(data) {
   els.frameworkSelect.dispatchEvent(new Event('change'));
 }
 //função do botão de criticar projeto
-criticarProjetoBtn.addEventListener('click',criticarProjeto);
+criticarProjetoBtn.addEventListener('click', exportCritiqueJson);
 
-function criticarProjeto() {
+function abrirModalCritica() {
   if (!state.currentProjectId) {
     toast('Nenhum projeto carregado', 'warn');
     return;
@@ -586,21 +586,53 @@ function criticarProjeto() {
   const body = document.createElement('div');
   body.className = 'checklist';
   body.innerHTML = `
-    <div class="check-item">
-      <div>
-        <strong>Critique seu projeto:</strong>
-        <p>Revise cada bloco e verifique se atende aos critérios de clareza, relevância e viabilidade.</p>
-      </div>
-    </div>
-    <div class="check-item">
-      <div>
-        <strong>Peça feedback a colegas ou mentores</strong>
-        <p>Compartilhe o projeto e solicite opiniões construtivas.</p>
-      </div>
-    </div>
+<div class="check-item">
+  <div>
+    <strong>Faça a critica do seu projeto usando uma IA:</strong>
+    <ol>
+      <li>Acesse a pasta downloads do seu dispositivo</li>
+      <li>Verifique se o arquivo "Critica do Projeto - Nome do Projeto" está na pasta</li>
+      <li>Acesse sua IA preferida, como ChatGPT, Gemini ou outra. Faça o login se necessário</li>
+      <li>Faça o upload do arquivo "Critica do Projeto - Nome do Projeto"</li>
+      <li>No prompt da IA escreva: "Analise esse arquivo JSON e responda aos Prompts da chave "critiquePrompts""</li>
+      <li>A IA fará a critica daquilo que você escreveu nos campos do framework escolhido. Sugerimos que copie esse texto e cole em um editor de texto de sua preferência, ou faça o download se a IA permitir</li>
+      <li>Finalizada essa etapa você terá um excelente material para continuar o desenvolvimento do seu projeto</li>
+    </ol>
+  </div>
+</div>
   `;
   
   openModal('Criticar Projeto', body, [
     { label: 'Fechar', icon: 'x', onClick: closeModal }
   ]);
+}
+
+function exportCritiqueJson() {
+  const critiquePrompts = {
+    problemStatement: "Critique o problema do projeto. Ele é claro? É validado? Avalie a dor do cliente.",
+    solutionAnalysis: "Analise a solução proposta. Ela é inovadora? É viável? Sugira melhorias ou alternativas.",
+    businessModel: "Avalie o modelo de negócio. Ele é sustentável? Quais são os riscos? Sugira novas fontes de receita.",
+    targetAudience: "O público-alvo está bem definido? Há clareza na proposta de valor? Sugira canais de marketing e comunicação.",
+  };
+
+  const projectData = {
+    projectName: els.projectName.value || "Projeto sem título",
+    framework: state.currentFramework,
+    blocks: state.blocks,
+    critiquePrompts: critiquePrompts,
+  };
+
+  const filename = `Critica do Projeto - ${projectData.projectName}.json`;
+  const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  abrirModalCritica()
 }
