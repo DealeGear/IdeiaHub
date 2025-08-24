@@ -54,7 +54,25 @@ export function renderBlocks() {
 
 // Projeto
 function newProject(askConfirmation = false) {
-  const resetProject = () => {
+  if (askConfirmation && state.dirty) {
+    confirmModal(
+      'Iniciar novo projeto?',
+      'Você possui alterações não salvas. Deseja continuar?',
+      () => {
+        state.currentProjectId = null;
+        state.blocks = [];
+        state.currentFramework = "";
+        state.currentTemplate = "";
+        state.dirty = false;
+        els.projectName.value = "Projeto sem título";
+        els.frameworkSelect.value = "";
+        els.templateSelect.value = "";
+        renderBlocks();
+        setStatus('novo');
+        toast('Novo projeto iniciado', 'success');
+      }
+    );
+  } else {
     state.currentProjectId = null;
     state.blocks = [];
     state.currentFramework = "";
@@ -63,28 +81,8 @@ function newProject(askConfirmation = false) {
     els.projectName.value = "Projeto sem título";
     els.frameworkSelect.value = "";
     els.templateSelect.value = "";
-    
-    // LINHA CRUCIAL: Reseta o HTML da área de estado vazio
-    els.empty.innerHTML = `
-      <div class="intro-box">
-          <h2>Selecione um Framework ou Template</h2>
-          <p>Para começar, escolha uma das opções disponíveis na barra superior ou importe um projeto existente.</p>
-      </div>
-    `;
-
     renderBlocks();
     setStatus('novo');
-    toast('Novo projeto iniciado', 'success');
-  };
-
-  if (askConfirmation && state.dirty) {
-    confirmModal(
-      'Iniciar novo projeto?',
-      'Você possui alterações não salvas. Deseja continuar?',
-      resetProject
-    );
-  } else {
-    resetProject();
     if(askConfirmation) toast('Novo projeto iniciado', 'success');
   }
 }
@@ -132,10 +130,7 @@ function showFrameworkDescription(name) {
     "Mapa da Jornada do Cliente (Lite)": "O Mapa da Jornada do Cliente (Lite) é uma ferramenta que ajuda a visualizar as etapas que os clientes percorrem ao interagir com um produto ou serviço. Ele identifica estágios, ações do cliente, pontos de dor e oportunidades de melhoria. É útil para entender a experiência do cliente e identificar áreas de aprimoramento.",
     "Brief de Funcionalidade": "O Brief de Funcionalidade é um documento que descreve de forma clara e concisa uma funcionalidade específica de um produto. Ele inclui resumo, problema, solução proposta e critérios de aceite. É essencial para garantir que todos os envolvidos tenham uma compreensão comum do que deve ser desenvolvido e quais são as expectativas.",
     "Estratégia de Precificação": "A Estratégia de Precificação é uma ferramenta que ajuda a definir como um produto ou serviço será precificado. Ela abrange proposta de valor, segmentos/planos, preço inicial e teste & validação. É crucial para garantir que o preço esteja alinhado com o valor percebido pelo cliente e que seja competitivo no mercado.",
-    "Central de Ofertas Comunitárias": "A Central de Ofertas Comunitárias é uma plataforma que  conecta moradores locais a ofertas e promoções de pequenos comerciantes. Ela visa fortalecer a economia local, oferecendo um hub único para promoções do bairro. É ideal para criar uma comunidade de consumo consciente e apoiar negócios locais.",
-    "Business Model Canvas (BMC)": "O Business Model Canvas (BMC) é uma ferramenta visual que ajuda a estruturar e analisar os principais componentes de um modelo de negócios. Ele abrange nove blocos essenciais: segmentos de clientes, proposta de valor, canais, relacionamento com clientes, fontes de receita, recursos-chave, atividades-chave, parcerias-chave e estrutura de custos. É amplamente utilizado por empreendedores e empresas para desenvolver, inovar e comunicar seus modelos de negócios de forma clara e concisa.",
-    "Lean Startup": "O Lean Startup é uma metodologia que enfatiza a criação rápida de produtos mínimos viáveis (MVPs), a experimentação contínua e o aprendizado validado para desenvolver negócios e produtos. Ele se baseia em ciclos curtos de construção, medição e aprendizado, permitindo que empreendedores testem hipóteses, ajustem suas estratégias e minimizem riscos. O objetivo é criar produtos que atendam às necessidades reais dos clientes, promovendo a inovação e a eficiência no desenvolvimento de novos negócios.",
-    "Kanban": "O Kanban é uma metodologia visual de gerenciamento de projetos que utiliza cartões e quadros para representar tarefas e fluxos de trabalho. Ele ajuda equipes a visualizar o progresso, limitar o trabalho em andamento e identificar gargalos no processo. O Kanban promove a melhoria contínua, permitindo que as equipes ajustem seu fluxo de trabalho com base na demanda e na capacidade. É amplamente utilizado em desenvolvimento de software, marketing e operações para aumentar a eficiência e a colaboração.",
+    "Central de Ofertas Comunitárias": "A Central de Ofertas Comunitárias é uma plataforma que  conecta moradores locais a ofertas e promoções de pequenos comerciantes. Ela visa fortalecer a economia local, oferecendo um hub único para promoções do bairro. É ideal para criar uma comunidade de consumo consciente e apoiar negócios locais."
   };
 
   const description = descriptions[name];
@@ -405,7 +400,7 @@ function showHypothesisModal() {
 export function registerListeners() {
   const themeToggle = document.getElementById('themeToggle');
   const saveBtn = document.getElementById('saveBtn');
-  //const exportPdfBtn = document.getElementById('exportPdfBtn'); linha a ser deletada
+  const exportPdfBtn = document.getElementById('exportPdfBtn');
   const exportJsonBtn = document.getElementById('exportJsonBtn');
   const exportBtnSidebar = document.getElementById('exportBtnSidebar');
   const resetTemplateBtn = document.getElementById('resetTemplateBtn');
@@ -415,7 +410,6 @@ export function registerListeners() {
   const premiumBtnSidebar = document.getElementById('premiumBtnSidebar');
   const deleteProjectBtn = document.getElementById('deleteProjectBtn');
   const testHypothesisBtn = document.getElementById('testHypothesisBtn');
-  const criticarProjetoBtn = document.getElementById('criticarProjetoBtn');
   
   els.modalClose.addEventListener('click', closeModal);
   els.modalBackdrop.addEventListener('click', (e)=> { if (e.target === els.modalBackdrop) closeModal(); });
@@ -426,27 +420,10 @@ export function registerListeners() {
     toast('Tema alternado', 'success');
   });
 
-  async function handleSaveProject() {
-  if (state.currentProjectId) {
-    // Se o projeto já tem um ID, significa que já foi salvo.
-    // Pedimos confirmação antes de sobrescrever.
-    confirmModal(
-      'Salvar alterações?',
-      'Este projeto já existe. Deseja sobrescrevê-lo?',
-      async () => {
-        await saveProject(); // Chama a função do db.js para salvar
-        toast('Projeto salvo com sucesso!', 'success');
-      }
-    );
-  } else {
-    // Se é um projeto novo (sem ID), salva diretamente.
-    await saveProject();
-    toast('Projeto salvo com sucesso!', 'success');
-  }
-}
+  
 
-  saveBtn.addEventListener('click', handleSaveProject);
-  //exportPdfBtn.addEventListener('click', exportPDF);
+  saveBtn.addEventListener('click', saveProject);
+  exportPdfBtn.addEventListener('click', exportPDF);
   exportJsonBtn.addEventListener('click', async () => {
     try {
       await saveProject();
@@ -529,113 +506,4 @@ export function registerListeners() {
   });
   testHypothesisBtn.addEventListener('click', showHypothesisModal);
 document.getElementById('helpBtn').addEventListener('click', showHelpModal);  
-}
-
-// ... seus event listeners existentes
-
-// 1. Liga o botão de importar ao input de arquivo
-els.importJsonBtn.addEventListener('click', () => {
-  els.importFileInput.click();
-});
-
-// 2. Lida com a seleção do arquivo
-els.importFileInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (!file) {
-    return; // Se nenhum arquivo foi selecionado, não faz nada
-  }
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const importedData = JSON.parse(e.target.result);
-      loadProjectFromJSON(importedData);
-      toast('Projeto importado com sucesso!', 'success');
-      closeModal();
-    } catch (error) {
-      toast('Erro ao ler o arquivo JSON. Formato inválido.', 'error');
-      console.error('Erro ao processar JSON:', error);
-    }
-  };
-
-  reader.readAsText(file);
-});
-
-
-// 3. Função para carregar os dados do JSON no projeto
-function loadProjectFromJSON(data) {
-  // Limpa o projeto atual
-  els.projectName.value = data.name || "Projeto Importado";
-  state.currentFramework = data.framework;
-  state.currentTemplate = data.template;
-  state.blocks = data.blocks;
-  state.dirty = true; // O projeto tem alterações não salvas após a importação
-
-  // Atualiza a interface
-  renderBlocks();
-  setStatus('editando');
-  els.frameworkSelect.value = state.currentFramework;
-  els.frameworkSelect.dispatchEvent(new Event('change'));
-}
-//função do botão de criticar projeto
-criticarProjetoBtn.addEventListener('click', exportCritiqueJson);
-
-function abrirModalCritica() {
-  if (!state.currentProjectId) {
-    toast('Nenhum projeto carregado', 'warn');
-    return;
-  }
-  
-  const body = document.createElement('div');
-  body.className = 'checklist';
-  body.innerHTML = `
-<div class="check-item">
-  <div>
-    <strong>Faça a critica do seu projeto usando uma IA:</strong>
-    <ol>
-      <li>Acesse a pasta downloads do seu dispositivo</li>
-      <li>Verifique se o arquivo "Critica do Projeto - Nome do Projeto" está na pasta</li>
-      <li>Acesse sua IA preferida, com ChatGPT, Gemini ou outra. Faça o login se necessário</li>
-      <li>Faça o upload do arquivo "Critica do Projeto - Nome do Projeto"</li>
-      <li>No prompt da IA escreva: "Analise esse arquivo JSON e responda aos Prompts da chave "critiquePrompts""</li>
-      <li>A IA fará a critica daquilo que você escreveu nos campos do framework escolhido. Sugerimos que copie esse texto e cole em um editor de texto de sua preferência, ou faça o download se a IA permitir</li>
-      <li>Finalizada essa etapa você terá um excelente material para continuar o desenvolvimento do seu projeto</li>
-    </ol>
-  </div>
-</div>
-  `;
-  
-  openModal('Criticar Projeto', body, [
-    { label: 'Fechar', icon: 'x', onClick: closeModal }
-  ]);
-}
-
-function exportCritiqueJson() {
-  const critiquePrompts = {
-    problemStatement: "Critique o problema do projeto. Ele é claro? É validado? Avalie a dor do cliente.",
-    solutionAnalysis: "Analise a solução proposta. Ela é inovadora? É viável? Sugira melhorias ou alternativas.",
-    businessModel: "Avalie o modelo de negócio. Ele é sustentável? Quais são os riscos? Sugira novas fontes de receita.",
-    targetAudience: "O público-alvo está bem definido? Há clareza na proposta de valor? Sugira canais de marketing e comunicação.",
-  };
-
-  const projectData = {
-    projectName: els.projectName.value || "Projeto sem título",
-    framework: state.currentFramework,
-    blocks: state.blocks,
-    critiquePrompts: critiquePrompts,
-  };
-
-  const filename = `Critica do Projeto - ${projectData.projectName}.json`;
-  const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  abrirModalCritica()
 }

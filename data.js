@@ -27,6 +27,36 @@ export const frameworks = {
     { title: "Receitas", hint: "Fontes de receita.", span: 6 },
     { title: "Descrição", hint:"Breve descrição do projeto.", span:12}
   ],
+  "Business Model Canvas (BMC)": [
+    { title: "Segmentos de Clientes", hint: "Quem são seus clientes?", span: 6 },
+    { title: "Proposta de Valor", hint: "Que valor você oferece?", span: 6 },
+    { title: "Canais", hint: "Como você alcança seus clientes?", span: 6 },
+    { title: "Relacionamento com Clientes", hint: "Como você interage com os clientes?", span: 6 },
+    { title: "Fontes de Receita", hint: "Como você ganha dinheiro?", span: 6 },
+    { title: "Recursos Principais", hint: "Quais ativos são essenciais?", span: 6 },
+    { title: "Atividades-Chave", hint: "Quais ações são cruciais?", span: 6 },
+    { title: "Parcerias Principais", hint: "Quem são seus parceiros?", span: 6 },
+    { title: "Estrutura de Custos", hint: "Quais são os custos mais importantes?", span: 6 }
+  ],
+  "Lean Startup": [
+    { title: "Visão", hint: "Qual é a visão de longo prazo?", span: 12 },
+    { title: "Problema", hint: "Qual problema você está resolvendo?", span: 6 },
+    { title: "Solução", hint: "Qual é a solução proposta?", span: 6 },
+    { title: "Métricas-Chave", hint: "Quais métricas indicarão sucesso?", span: 6 },
+    { title: "Canais", hint: "Como você alcançará seus clientes?", span: 6 },
+    { title: "Estrutura de Custos", hint: "Quais são os custos principais?", span: 6 },
+    { title: "Fontes de Receita", hint: "Como você gerará receita?", span: 6 },
+    { title: "MVP", hint: "Qual é o produto mínimo viável?", span: 12 },
+    { title: "Feedback & Aprendizado", hint: "Como você coletará feedback?", span: 12 }
+  ],
+  "Kanban": [
+    { title: "Backlog", hint: "Tarefas pendentes.", span: 4 },
+    { title: "Em Progresso", hint: "Tarefas em andamento.", span: 4 },
+    { title: "Em Revisão", hint: "Tarefas para revisão ou teste.", span: 4 },
+    { title: "Concluído", hint: "Tarefas finalizadas.", span: 4 },
+    { title: "Bloqueado", hint: "Tarefas com impedimentos.", span: 4 },
+    { title: "Prioridade", hint: "Tarefas de alta prioridade.", span: 4 }
+  ],
   "Proposta de Valor (VPC)": [
     { title: "Cliente-Alvo", hint: "Quem é o cliente e contexto?", span: 6 },
     { title: "Tarefas do Cliente", hint: "O que tentam realizar?", span: 6 },
@@ -285,6 +315,34 @@ export const templates = {
 
 
   },
+  "AgTech - Mercado de Permacultura Urbana": {
+  "nomeDoProjeto": "EcoMercado Urbano",
+  "Objetivo Principal": " Uma plataforma que conecta produtores de alimentos em pequena escala (hortas em telhados, pequenos quintais) com restaurantes locais e consumidores dispostos a pagar por produtos ultra-locais.",  
+  "Problema": "Moradores urbanos têm dificuldade em encontrar alimentos frescos e sustentáveis, enquanto pequenos produtores não têm um canal de vendas direto.", 
+  "Solução": "Uma plataforma online para que produtores de permacultura urbana vendam seus produtos, e consumidores assinem cestas semanais de alimentos locais.",  
+  "Solução Proposta": "Desenvolver um marketplace que conecte produtores e consumidores de permacultura urbana, com um sistema de assinaturas e entrega direta.", 
+  "Público/Segmentos": "Consumidores conscientes, moradores urbanos, restaurantes locais, pequenos produtores urbanos.",  
+  "Canais": "Feiras de bairro, redes sociais (grupos de alimentação saudável), parcerias com cafeterias e restaurantes.", 
+  "MVP": "Um site simples com um sistema de assinatura para 10 produtores e 50 clientes iniciais em um bairro específico.", 
+  "Validação": "Acompanhamento da frequência de pedidos semanais, feedback dos clientes e crescimento do número de produtores inscritos.",  
+  "Critérios de Aceite": "50 assinaturas ativas, 10 produtores registrados e uma taxa de satisfação de 90% dos clientes.",  
+  "OKRs": "O: Validar o modelo de negócio; KR1: 50 assinaturas ativas em 3 meses; KR2: 10 produtores na plataforma.", 
+  "Forças": "Crescente demanda por alimentos locais e orgânicos, forte apelo comunitário.",
+  "Fraquezas": "Escalabilidade limitada por espaço físico, desafios logísticos de entrega, dependência de um pequeno número de produtores.",  
+  "Oportunidades": "Expansão para outros produtos sustentáveis, parcerias com restaurantes e escolas, educação sobre permacultura.",  
+  "Ameaças": "Concorrência de grandes redes de supermercados, regulamentações locais sobre venda de alimentos, sazonalidade dos produtos.",  
+  "Resumo": "EcoMercado Urbano é um marketplace que facilita a conexão entre produtores de alimentos em permacultura urbana e consumidores locais, promovendo um sistema alimentar mais justo e sustentável.",  
+  "Área de Atuação": "Alimentação, sustentabilidade, comunidade, tecnologia.",  
+  "Nível de Experiência": "Intermediário",  
+  "Recursos Disponíveis": "Plataforma online, rede de produtores urbanos, lideranças comunitárias.",
+  "Prazo Desejado": "4 meses para o lançamento do MVP e validação inicial.",  
+  "Preço Inicial": "Taxa de assinatura para consumidores, comissão sobre as vendas para os produtores.",
+  "Receitas": "Comissão sobre vendas, taxa de assinatura, patrocínios de marcas sustentáveis.",
+  "Recursos Disponíveis": "Plataforma online, rede de produtores urbanos, lideranças comunitárias.",  
+  "Prazo Desejado": "4 meses para o lançamento do MVP e validação inicial.",
+  "Critério de Sucesso": "Implementação bem-sucedida em um bairro-piloto e feedback positivo de produtores e consumidores."
+  },
+  
   "Rede de Troca de Livros": {
    "Problema": "Livros usados acumulam poeira e não são lidos.",
     "Solução": "Plataforma de troca de livros entre usuários.",
